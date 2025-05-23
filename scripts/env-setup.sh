@@ -159,9 +159,9 @@ EOF
     
     if ask_yn "${YELLOW}Would you like to upload your secrets to GitHub now?${RESET}"; then
       echo -e "${YELLOW}Proceeding to upload secrets to GitHub...${RESET}"
+      # GitHub upload logic would go here
     else
-      echo -e "${GREEN}✅ Setup complete. Edit your .env file when ready.${RESET}"
-      exit 0
+      echo -e "${GREEN}✅ Environment setup complete. You can edit .env manually when ready.${RESET}"
     fi
     ;;
   1)
