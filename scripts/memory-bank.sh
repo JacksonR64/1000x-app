@@ -4,11 +4,7 @@
 
 MEMORY_DIR="memory-bank"
 
-read -p "📦 Would you like to set up a Memory Bank directory with starter files? (y/n): " confirm
-if [[ "$confirm" != "y" ]]; then
-  echo "❌ Skipping Memory Bank setup."
-  exit 0
-fi
+echo "📦 Setting up Memory Bank directory with starter files..."
 
 mkdir -p "$MEMORY_DIR"
 

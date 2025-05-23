@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "setup": "./scripts/init-template.sh",
+    "setup": "./scripts/comprehensive-setup-modern.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,29 +14,22 @@
     "secrets:push": "scripts/push-secrets.sh"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.4.2",
     "next": "15.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/eslintrc": "^3",
-    "@playwright/test": "^1.52.0",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@playwright/test": "^1.51.0",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^9.16.0",
     "eslint-config-next": "15.3.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.0.0",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,md,json}": [
-      "prettier --write"
-    ]
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2"
   }
 }
