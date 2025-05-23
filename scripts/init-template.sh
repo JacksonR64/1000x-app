@@ -14,12 +14,25 @@ if [[ -f .github/template.yml && ! -f .template-setup-complete ]]; then
     read -p "📧 Your email: " USER_EMAIL
     read -p "📝 Project description: " PROJECT_DESC
     
-    # Update package.json
+    # Update package.json safely using node
     if [[ -f package.json ]]; then
-        sed -i.bak "s/\"name\": \".*\"/\"name\": \"$PROJECT_NAME\"/" package.json
-        sed -i.bak "s/\"description\": \".*\"/\"description\": \"$PROJECT_DESC\"/" package.json
-        rm package.json.bak
+        # Use node to safely update JSON without sed issues
+        node -e "
+        const fs = require('fs');
+        const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+        pkg.name = process.argv[1];
+        pkg.description = process.argv[2];
+        fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+        " "$PROJECT_NAME" "$PROJECT_DESC"
         echo "✅ Updated package.json"
+    fi
+    
+    # Update README.md title safely
+    if [[ -f README.md ]]; then
+        # Replace the title line only
+        sed -i.bak "1s/.*/# 🚀 $PROJECT_NAME/" README.md
+        rm README.md.bak
+        echo "✅ Updated README.md title"
     fi
     
     # Mark setup as complete
