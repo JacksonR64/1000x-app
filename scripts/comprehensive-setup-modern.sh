@@ -21,15 +21,22 @@ ask_yn() {
     fi
     
     while true; do
-        read -rp "Enter your choice (1/2, or press Enter for default): " response
+        read -rp "Enter choice (1/2) or press Enter for default: " response
         case "$response" in
-            1|[Yy]|[Yy][Ee][Ss]) return 0 ;;
-            2|[Nn]|[Nn][Oo]) return 1 ;;
+            1|[Yy]|[Yy][Ee][Ss]) 
+                echo "✓ Selected: Yes"
+                return 0 
+                ;;
+            2|[Nn]|[Nn][Oo]) 
+                echo "✓ Selected: No"
+                return 1 
+                ;;
             "") 
-                echo "Using default: $([[ "$default" == "y" ]] && echo "Yes" || echo "No")"
                 if [[ "$default" == "y" ]]; then
+                    echo "✓ Using default: Yes"
                     return 0
                 else
+                    echo "✓ Using default: No"
                     return 1
                 fi
                 ;;
@@ -42,13 +49,14 @@ SCRIPTS_DIR="$(dirname "$0")"
 
 echo "This comprehensive setup wizard will configure:"
 echo "• Next.js project dependencies and basic setup"
+echo "• Tailwind CSS 4 with all required packages"
 echo "• Environment variables and API keys"
 echo "• Memory bank for AI context"
 echo "• MCP tools for Cursor IDE"
 echo "• GitHub secrets management"
 echo ""
 
-# STEP 0: Basic Next.js Project Setup (THE MISSING PIECE!)
+# STEP 0: Basic Next.js Project Setup
 echo "🏗️ BASIC NEXT.JS PROJECT SETUP"
 echo "==============================="
 
@@ -70,6 +78,54 @@ fi
 if [[ ! -f "package.json" ]]; then
     echo "❌ package.json not found! This doesn't appear to be a valid Next.js project."
     exit 1
+fi
+
+# Install missing Tailwind CSS 4 dependencies
+echo "🎨 Installing Tailwind CSS 4 dependencies..."
+
+# Check if @tailwindcss/postcss is installed
+if ! npm list @tailwindcss/postcss >/dev/null 2>&1; then
+    echo "📦 Installing missing @tailwindcss/postcss..."
+    npm install -D @tailwindcss/postcss
+    echo "✅ @tailwindcss/postcss installed"
+else
+    echo "✅ @tailwindcss/postcss already installed"
+fi
+
+# Verify other critical packages
+echo "🔍 Verifying critical packages..."
+
+missing_packages=()
+
+# Check for essential packages
+if ! npm list tailwindcss >/dev/null 2>&1; then
+    missing_packages+=("tailwindcss")
+fi
+
+if ! npm list postcss >/dev/null 2>&1; then
+    missing_packages+=("postcss")
+fi
+
+if ! npm list typescript >/dev/null 2>&1; then
+    missing_packages+=("typescript")
+fi
+
+if ! npm list @types/node >/dev/null 2>&1; then
+    missing_packages+=("@types/node")
+fi
+
+if ! npm list @types/react >/dev/null 2>&1; then
+    missing_packages+=("@types/react")
+fi
+
+if ! npm list @types/react-dom >/dev/null 2>&1; then
+    missing_packages+=("@types/react-dom")
+fi
+
+if [[ ${#missing_packages[@]} -gt 0 ]]; then
+    echo "📦 Installing missing packages: ${missing_packages[*]}"
+    npm install -D "${missing_packages[@]}"
+    echo "✅ Missing packages installed"
 fi
 
 # Check if critical Next.js files exist
@@ -94,6 +150,10 @@ fi
 
 if [[ ! -f "app/page.tsx" && ! -f "app/page.js" ]]; then
     missing_files+=("app/page.tsx")
+fi
+
+if [[ ! -f "postcss.config.mjs" && ! -f "postcss.config.js" ]]; then
+    missing_files+=("postcss.config.mjs/js")
 fi
 
 if [[ ${#missing_files[@]} -gt 0 ]]; then
@@ -134,7 +194,7 @@ echo ""
 
 # STEP 1: Environment Setup
 echo "🔧 ENVIRONMENT SETUP"
-if ask_yn "Set up environment variables with guided prompts?"; then
+if ask_yn "Set up environment variables with guided prompts?" "y"; then
     if [[ -f "$SCRIPTS_DIR/env-setup.sh" ]]; then
         echo "🔧 Running environment setup..."
         bash "$SCRIPTS_DIR/env-setup.sh"
@@ -149,7 +209,7 @@ echo ""
 
 # STEP 2: Memory Bank Setup  
 echo "🧠 MEMORY BANK SETUP"
-if ask_yn "Create memory bank with starter context files?"; then
+if ask_yn "Create memory bank with starter context files?" "y"; then
     if [[ -f "$SCRIPTS_DIR/memory-bank.sh" ]]; then
         echo "🔧 Setting up memory bank..."
         bash "$SCRIPTS_DIR/memory-bank.sh"
@@ -166,7 +226,7 @@ echo ""
 echo "🤖 MCP INTEGRATION SETUP"
 
 # TaskMaster-AI  
-if ask_yn "Set up TaskMaster-AI MCP for project management?"; then
+if ask_yn "Set up TaskMaster-AI MCP for project management?" "y"; then
     if [[ -f "$SCRIPTS_DIR/setup-taskmaster-ai.sh" ]]; then
         echo "🔧 Setting up TaskMaster-AI MCP..."
         bash "$SCRIPTS_DIR/setup-taskmaster-ai.sh"
@@ -180,7 +240,7 @@ fi
 echo ""
 
 # Context7
-if ask_yn "Set up Context7 MCP for documentation access?"; then
+if ask_yn "Set up Context7 MCP for documentation access?" "y"; then
     if [[ -f "$SCRIPTS_DIR/setup-context7.sh" ]]; then
         echo "🔧 Setting up Context7 MCP..."
         bash "$SCRIPTS_DIR/setup-context7.sh"
@@ -194,7 +254,7 @@ fi
 echo ""
 
 # Supabase MCP
-if ask_yn "Set up Supabase MCP for database operations?"; then
+if ask_yn "Set up Supabase MCP for database operations?" "y"; then
     if [[ -f "$SCRIPTS_DIR/setup-supabase.sh" ]]; then
         echo "🔧 Setting up Supabase MCP..."
         bash "$SCRIPTS_DIR/setup-supabase.sh"
@@ -225,6 +285,20 @@ if command -v tsc >/dev/null 2>&1 || npm list typescript >/dev/null 2>&1; then
     echo "✅ TypeScript available"
 else
     echo "⚠️ TypeScript not available"
+fi
+
+# Check Tailwind CSS 4 setup
+if npm list tailwindcss >/dev/null 2>&1 && npm list @tailwindcss/postcss >/dev/null 2>&1; then
+    echo "✅ Tailwind CSS 4 setup verified"
+else
+    echo "⚠️ Tailwind CSS 4 setup issue detected"
+fi
+
+# Check PostCSS
+if npm list postcss >/dev/null 2>&1; then
+    echo "✅ PostCSS available"
+else
+    echo "⚠️ PostCSS issue detected"
 fi
 
 echo ""
